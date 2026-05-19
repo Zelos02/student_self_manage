@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="page-title">待办事项管理</h3>
+        <p class="page-subtitle">
+            管理学习、生活计划，设置正向计时、倒计时、目标时间和提醒时间。
+        </p>
+    </div>
+
+    <a href="{{ url_for('todo.add_todo') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>
+        添加待办事项
+    </a>
+</div>
+
+<div class="app-card bg-white p-3">
+
+    {% if todos %}
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle todo-table mb-0">
+            <thead>
+                <tr>
+                    <th>事项内容</th>
+                    <th>分类</th>
+                    <th>计时方式</th>
+                    <th>目标时间</th>
+                    <th>截止时间</th>
+                    <th>提醒</th>
+                    <th>状态</th>
+                    <th width="230">操作</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for todo in todos %}
+                <tr>
+                    <td>
+                        <div class="todo-title">
+                            {{ todo.title }}
+    </div>
+
+                        {% if todo.description %}
+                            <div class="todo-desc">
+                                {{ todo.description }}
+</div>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if todo.category_id and category_map.get(todo.category_id) %}
+                            <span class="badge rounded-pill bg-info">
+                                {{ category_map.get(todo.category_id) }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted small">未分类</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if todo.timing_mode == "count_up" %}
+                            <span class="badge rounded-pill bg-primary">
+                                <i class="bi bi-arrow-up-circle me-1"></i>
+                                正向计时
+                            </span>
+                        {% else %}
+                            <span class="badge rounded-pill bg-warning text-dark">
+                                <i class="bi bi-hourglass-split me-1"></i>
+                                倒计时
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if todo.target_minutes %}
+                            {{ todo.target_minutes }} 分钟
+                        {% else %}
+                            <span class="text-muted small">未设置</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if todo.due_time %}
+                            {{ todo.due_time.strftime("%Y-%m-%d %H:%M") }}
+                        {% else %}
+                            <span class="text-muted small">未设置</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <span class="text-muted small">
+                            截止前 {{ todo.remind_before_minutes or 10 }} 分钟
+                        </span>
+                    </td>
+
+                    <td>
+                        {% if todo.status == "未开始" %}
+                            <span class="badge status-badge bg-secondary">未开始</span>
+                        {% elif todo.status == "进行中" %}
+                            <span class="badge status-badge bg-primary">进行中</span>
+                        {% elif todo.status == "已完成" %}
+                            <span class="badge status-badge bg-success">已完成</span>
+                        {% else %}
+                            <span class="badge status-badge bg-dark">已取消</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if todo.status != "已完成" %}
+                        <form method="post"
+                              action="{{ url_for('focus.start_focus', todo_id=todo.todo_id) }}"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="bi bi-play-circle"></i>
+                                开始
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        <a href="{{ url_for('todo.edit_todo', todo_id=todo.todo_id) }}"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil-square"></i>
+                            修改
+                        </a>
+
+                        {% if todo.status != "已完成" %}
+                        <form method="post"
+                              action="{{ url_for('todo.finish_todo', todo_id=todo.todo_id) }}"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-check-circle"></i>
+                                完成
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        <form method="post"
+                              action="{{ url_for('todo.delete_todo', todo_id=todo.todo_id) }}"
+                              class="d-inline"
+                              onsubmit="return confirm('确定要删除这个待办事项吗？');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty-box">
+        <div class="empty-icon">
+            <i class="bi bi-inbox"></i>
+        </div>
+
+        <h5>暂无待办事项</h5>
+        <p class="mb-3">
+            先添加一个学习或生活计划，开始进行自我管理。
+        </p>
+
+        <a href="{{ url_for('todo.add_todo') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>
+            添加第一个待办事项
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="app-card bg-white p-4 mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h3 class="page-title">
+                {{ room.room_name }}
+            </h3>
+
+            <p class="page-subtitle mb-0">
+                邀请码：
+                <strong>{{ room.room_code }}</strong>
+                &nbsp;|&nbsp;
+                成员数：{{ member_count }} 人
+            </p>
+        </div>
+
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('room.room_list') }}" class="btn btn-outline-secondary">
+                返回列表
+            </a>
+
+            <form method="post"
+                  action="{{ url_for('room.leave_room', room_id=room.room_id) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('确定要退出该自习室吗？');">
+                <button type="submit" class="btn btn-outline-danger">
+                    退出自习室
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="app-card bg-white p-4 mb-4">
+    <form method="get" class="row g-3 align-items-end">
+
+        <div class="col-md-8">
+            <label class="form-label">排行榜统计范围</label>
+            <select name="range_type" class="form-select">
+                <option value="week" {% if range_type == "week" %}selected{% endif %}>
+                    本周排行榜
+                </option>
+                <option value="month" {% if range_type == "month" %}selected{% endif %}>
+                    本月排行榜
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">
+                查看排行榜
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-7">
+        <div class="app-card bg-white p-4 h-100">
+            <h5 class="mb-3">
+                <i class="bi bi-trophy text-primary me-1"></i>
+                {% if range_type == "week" %}
+                    本周专注排行榜
+                {% else %}
+                    本月专注排行榜
+                {% endif %}
+            </h5>
+
+            <p class="text-muted small">
+                统计范围：{{ start_date }} 至 {{ end_date }}
+            </p>
+
+            {% if rankings %}
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>成员</th>
+                            <th>专注时长</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for item in rankings %}
+                        <tr>
+                            <td>
+                                {% if item.rank == 1 %}
+                                    <span class="badge rounded-pill bg-warning text-dark">
+                                        第 1 名
+                                    </span>
+                                {% elif item.rank == 2 %}
+                                    <span class="badge rounded-pill bg-secondary">
+                                        第 2 名
+                                    </span>
+                                {% elif item.rank == 3 %}
+                                    <span class="badge rounded-pill bg-info">
+                                        第 3 名
+                                    </span>
+                                {% else %}
+                                    第 {{ item.rank }} 名
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <strong>{{ item.nickname }}</strong>
+
+                                {% if item.user_id == current_user.user_id %}
+                                    <span class="badge rounded-pill bg-primary ms-1">
+                                        我
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ item.total_time_text }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+
+            <div class="empty-box">
+                <div class="empty-icon">
+                    <i class="bi bi-trophy"></i>
+                </div>
+                <h5>暂无排行榜数据</h5>
+                <p>成员完成专注计时后，系统会自动生成排名。</p>
+            </div>
+
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="app-card bg-white p-4 h-100">
+            <h5 class="mb-3">
+                <i class="bi bi-stars text-primary me-1"></i>
+                发布心愿
+            </h5>
+
+            <form method="post" action="{{ url_for('room.add_wish', room_id=room.room_id) }}">
+                <div class="mb-3">
+                    <textarea name="content"
+                              class="form-control"
+                              rows="5"
+                              placeholder="例如：希望这周能完成数据库课程设计报告！"
+                              required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    发布到心愿墙
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<div class="app-card bg-white p-4">
+    <h5 class="mb-3">
+        <i class="bi bi-chat-heart text-primary me-1"></i>
+        心愿墙
+    </h5>
+
+    {% if wishes %}
+
+    <div class="row g-4">
+        {% for wish in wishes %}
+        <div class="col-md-4">
+            <div class="card feature-card">
+                <div class="card-body">
+                    <p class="mb-3">
+                        {{ wish.content }}
+                    </p>
+
+                    <div class="text-muted small">
+                        <i class="bi bi-person-circle me-1"></i>
+                        {{ wish.nickname }}
+                    </div>
+
+                    <div class="text-muted small">
+                        <i class="bi bi-clock me-1"></i>
+                        {{ wish.created_at }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+
+    <div class="empty-box">
+        <div class="empty-icon">
+            <i class="bi bi-chat-heart"></i>
+        </div>
+        <h5>暂无心愿内容</h5>
+        <p>发布第一条心愿，让自习室更有学习氛围。</p>
+    </div>
+
+    {% endif %}
+</div>
+
+{% endblock %}

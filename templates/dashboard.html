@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="app-card bg-white p-4 mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h2 class="page-title">
+                欢迎回来，{{ current_user.nickname or current_user.username }}
+            </h2>
+            <p class="page-subtitle mb-0">
+                今天也要好好规划时间，记录学习生活，让每一天都有进步。
+            </p>
+        </div>
+
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('todo.add_todo') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>
+                添加待办事项
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card feature-card text-center">
+            <div class="card-body">
+                <div class="feature-icon">
+                    <i class="bi bi-list-check"></i>
+                </div>
+                <h5>待办事项</h5>
+                <p class="text-muted small">
+                    添加、修改和管理学习生活计划
+                </p>
+                <a href="{{ url_for('todo.todo_list') }}" class="btn btn-outline-primary btn-sm">
+                    进入模块
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card feature-card text-center">
+            <div class="card-body">
+                <div class="feature-icon">
+                    <i class="bi bi-stopwatch"></i>
+                </div>
+                <h5>专注计时</h5>
+                <p class="text-muted small">
+                    记录事项开始时间和结束时间
+                </p>
+                <a href="{{ url_for('todo.todo_list') }}" class="btn btn-outline-primary btn-sm">
+                    选择事项
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card feature-card text-center">
+            <div class="card-body">
+                <div class="feature-icon">
+                    <i class="bi bi-bar-chart"></i>
+                </div>
+                <h5>数据统计</h5>
+                <p class="text-muted small">
+                    用柱状图和饼图展示时间分布
+                </p>
+                <a href="{{ url_for('stats.index') }}" class="btn btn-outline-primary btn-sm">
+                    查看统计
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card feature-card text-center">
+            <div class="card-body">
+                <div class="feature-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h5>自习室</h5>
+                <p class="text-muted small">
+                    与同学一起监督进步并排名
+                </p>
+                <a href="{{ url_for('room.room_list') }}" class="btn btn-outline-primary btn-sm">
+                    进入模块
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mt-1">
+
+    <div class="col-md-8">
+        <div class="app-card bg-white p-4">
+            <h5 class="mb-3">
+                <i class="bi bi-lightning-charge text-primary me-1"></i>
+                系统功能说明
+            </h5>
+
+            <p class="text-muted mb-0">
+                本系统用于大学生日常学习生活的计划、监控和管理。用户可以创建待办事项，
+                进行正向计时或倒计时，后续还可以查看每日、每周、每月的时间统计结果。
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="app-card bg-white p-4">
+            <h5 class="mb-3">
+                <i class="bi bi-calendar-check text-primary me-1"></i>
+                今日建议
+            </h5>
+
+            <p class="text-muted mb-2">
+                先创建 2-3 个重要待办事项。
+            </p>
+            <p class="text-muted mb-0">
+                再使用计时功能记录真实学习时间。
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mt-1">
+
+    <div class="col-md-6">
+        <div class="app-card bg-white p-4">
+            <h5 class="mb-3">
+                <i class="bi bi-person-circle text-primary me-1"></i>
+                个人中心
+            </h5>
+            <p class="text-muted">
+                修改昵称、邮箱、头像地址和登录密码。
+            </p>
+            <a href="{{ url_for('profile.profile_center') }}" class="btn btn-outline-primary btn-sm">
+                进入个人中心
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="app-card bg-white p-4">
+            <h5 class="mb-3">
+                <i class="bi bi-question-circle text-primary me-1"></i>
+                帮助中心
+            </h5>
+            <p class="text-muted">
+                查看软件介绍、模块说明和基本操作流程。
+            </p>
+            <a href="{{ url_for('profile.help_page') }}" class="btn btn-outline-primary btn-sm">
+                查看帮助
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

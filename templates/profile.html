@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="page-title">个人中心</h3>
+        <p class="page-subtitle">
+            查看和修改个人信息，维护账号安全。
+        </p>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- 左侧：个人信息展示 -->
+    <div class="col-md-4">
+        <div class="app-card bg-white p-4 text-center h-100">
+
+            {% if current_user.avatar %}
+
+                {% if current_user.avatar.startswith("http") %}
+                    <!-- 网络头像 -->
+                    <img src="{{ current_user.avatar }}"
+                         alt="头像"
+                         class="rounded-circle mb-3"
+                         style="width: 96px; height: 96px; object-fit: cover;">
+                {% else %}
+                    <!-- 本地上传头像 -->
+                    <img src="{{ url_for('static', filename=current_user.avatar) }}"
+                         alt="头像"
+                         class="rounded-circle mb-3"
+                         style="width: 96px; height: 96px; object-fit: cover;">
+                {% endif %}
+
+            {% else %}
+
+                <!-- 默认头像 -->
+                <div class="feature-icon mx-auto mb-3"
+                     style="width: 96px; height: 96px; font-size: 42px;">
+                    <i class="bi bi-person"></i>
+                </div>
+
+            {% endif %}
+
+            <h4>{{ current_user.nickname or current_user.username }}</h4>
+
+            <p class="text-muted mb-1">
+                用户名：{{ current_user.username }}
+            </p>
+
+            <p class="text-muted mb-1">
+                邮箱：
+                {% if current_user.email %}
+                    {{ current_user.email }}
+                {% else %}
+                    未设置
+                {% endif %}
+            </p>
+
+            <p class="text-muted mb-3">
+                注册时间：
+                {% if current_user.created_at %}
+                    {{ current_user.created_at.strftime("%Y-%m-%d %H:%M:%S") }}
+                {% else %}
+                    -
+                {% endif %}
+            </p>
+
+            {% if current_user.status == 1 %}
+                <span class="badge rounded-pill bg-success">
+                    账号状态正常
+                </span>
+            {% else %}
+                <span class="badge rounded-pill bg-danger">
+                    账号已禁用
+                </span>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- 右侧：修改信息和修改密码 -->
+    <div class="col-md-8">
+
+        <!-- 修改个人信息 -->
+        <div class="app-card bg-white p-4 mb-4">
+            <h5 class="mb-3">
+                <i class="bi bi-pencil-square text-primary me-1"></i>
+                修改个人信息
+            </h5>
+
+            <form method="post"
+                  action="{{ url_for('profile.update_profile') }}"
+                  enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label class="form-label">昵称</label>
+                    <input type="text"
+                           name="nickname"
+                           class="form-control"
+                           value="{{ current_user.nickname or current_user.username }}"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">邮箱</label>
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           value="{{ current_user.email or '' }}"
+                           placeholder="例如：student@example.com">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">上传本地头像</label>
+                    <input type="file"
+                           name="avatar_file"
+                           class="form-control"
+                           accept=".png,.jpg,.jpeg,.gif,.webp">
+                    <div class="form-text">
+                        支持 png、jpg、jpeg、gif、webp 格式，建议图片大小不超过 2MB。
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">或填写头像图片 URL</label>
+                    <input type="text"
+                           name="avatar_url"
+                           class="form-control"
+                           value="{% if current_user.avatar and current_user.avatar.startswith('http') %}{{ current_user.avatar }}{% endif %}"
+                           placeholder="例如：https://example.com/avatar.jpg">
+                    <div class="form-text">
+                        如果同时上传本地头像和填写 URL，系统会优先使用本地上传头像。
+                    </div>
+                </div>
+
+                {% if current_user.avatar %}
+                <div class="mb-3">
+                    <label class="form-label">当前头像保存值</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ current_user.avatar }}"
+                           readonly>
+                    <div class="form-text">
+                        本地上传头像一般显示为 uploads/avatars/xxx.jpg；网络头像一般显示为完整 URL。
+                    </div>
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-1"></i>
+                    保存个人信息
+                </button>
+            </form>
+        </div>
+
+        <!-- 修改密码 -->
+        <div class="app-card bg-white p-4">
+            <h5 class="mb-3">
+                <i class="bi bi-shield-lock text-primary me-1"></i>
+                修改密码
+            </h5>
+
+            <form method="post" action="{{ url_for('profile.change_password') }}">
+
+                <div class="mb-3">
+                    <label class="form-label">原密码</label>
+                    <input type="password"
+                           name="old_password"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">新密码</label>
+                    <input type="password"
+                           name="new_password"
+                           class="form-control"
+                           required>
+                    <div class="form-text">
+                        新密码长度建议不少于 6 位。
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">确认新密码</label>
+                    <input type="password"
+                           name="confirm_password"
+                           class="form-control"
+                           required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-key me-1"></i>
+                    修改密码
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

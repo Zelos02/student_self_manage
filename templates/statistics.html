@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="page-title">数据统计</h3>
+        <p class="page-subtitle">
+            查看每日待办事项用时、分类时间占比，以及每次专注记录的开始和结束时间。
+        </p>
+    </div>
+</div>
+
+<div class="app-card bg-white p-4 mb-4">
+    <form method="get" class="row g-3 align-items-end">
+
+        <div class="col-md-4">
+            <label class="form-label">选择日期</label>
+            <input type="date"
+                   name="date"
+                   class="form-control"
+                   value="{{ selected_date }}">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">分类占比统计范围</label>
+            <select name="range_type" class="form-select">
+                <option value="week" {% if range_type == "week" %}selected{% endif %}>
+                    本周
+                </option>
+                <option value="month" {% if range_type == "month" %}selected{% endif %}>
+                    本月
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-1"></i>
+                查询统计
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-3">
+        <div class="app-card bg-white p-4 text-center">
+            <div class="feature-icon mx-auto">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <h6 class="text-muted">当日总专注时长</h6>
+            <h4 class="mb-0">{{ total_minutes_today or 0 }} 分钟</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="app-card bg-white p-4 text-center">
+            <div class="feature-icon mx-auto">
+                <i class="bi bi-list-check"></i>
+            </div>
+            <h6 class="text-muted">当日计时次数</h6>
+            <h4 class="mb-0">{{ record_count or 0 }} 次</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="app-card bg-white p-4 text-center">
+            <div class="feature-icon mx-auto">
+                <i class="bi bi-bar-chart"></i>
+            </div>
+            <h6 class="text-muted">当日涉及事项数</h6>
+            <h4 class="mb-0">{{ task_count or 0 }} 个</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="app-card bg-white p-4 text-center">
+            <div class="feature-icon mx-auto">
+                <i class="bi bi-speedometer2"></i>
+            </div>
+            <h6 class="text-muted">平均每次专注</h6>
+            <h4 class="mb-0">{{ avg_minutes or 0 }} 分钟</h4>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-7">
+        <div class="app-card bg-white p-4">
+            <h5 class="mb-3">
+                <i class="bi bi-bar-chart text-primary me-1"></i>
+                {{ selected_date }} 各待办事项用时
+            </h5>
+
+            {% if daily_labels %}
+                <div id="dailyBarChart" style="height: 360px;"></div>
+            {% else %}
+                <div class="empty-box">
+                    <div class="empty-icon">
+                        <i class="bi bi-inbox"></i>
+                    </div>
+                    <h5>当天暂无计时数据</h5>
+                    <p>请先完成一次专注计时，再查看统计图表。</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="app-card bg-white p-4">
+            <h5 class="mb-3">
+                <i class="bi bi-pie-chart text-primary me-1"></i>
+                {% if range_type == "week" %}
+                    本周分类时间占比
+                {% else %}
+                    本月分类时间占比
+                {% endif %}
+            </h5>
+
+            {% if category_data %}
+                <div id="categoryPieChart" style="height: 360px;"></div>
+            {% else %}
+                <div class="empty-box">
+                    <div class="empty-icon">
+                        <i class="bi bi-pie-chart"></i>
+                    </div>
+                    <h5>暂无分类统计数据</h5>
+                    <p>完成计时后，系统会自动生成分类占比。</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<div class="app-card bg-white p-4 mb-4">
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="text-muted small mb-1">统计日期范围</div>
+            <div class="fw-bold">
+                {{ start_date }} 至 {{ end_date }}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="text-muted small mb-1">
+                {% if range_type == "week" %}
+                    本周分类总数
+                {% else %}
+                    本月分类总数
+                {% endif %}
+            </div>
+            <div class="fw-bold">
+                {{ category_data | length }} 类
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="text-muted small mb-1">
+                {% if range_type == "week" %}
+                    本周 / 本月图表说明
+                {% else %}
+                    本月图表说明
+                {% endif %}
+            </div>
+            <div class="fw-bold">
+                分类占比单位：分钟
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="app-card bg-white p-4">
+    <h5 class="mb-3">
+        <i class="bi bi-table text-primary me-1"></i>
+        {{ selected_date }} 计时明细记录
+    </h5>
+
+    {% if records %}
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>待办事项</th>
+                    <th>分类</th>
+                    <th>开始时间</th>
+                    <th>结束时间</th>
+                    <th>持续时长</th>
+                    <th>分钟数</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>
+                        <strong>{{ record.title }}</strong>
+                    </td>
+
+                    <td>
+                        <span class="badge rounded-pill bg-info">
+                            {{ record.category_name or "未分类" }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {% if record.start_time %}
+                            {{ record.start_time.strftime("%Y-%m-%d %H:%M:%S") }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if record.end_time %}
+                            {{ record.end_time.strftime("%Y-%m-%d %H:%M:%S") }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ record.duration_text or "0秒" }}
+                    </td>
+
+                    <td>
+                        {{ ((record.duration_seconds or 0) / 60) | round(2) }} 分钟
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty-box">
+        <div class="empty-icon">
+            <i class="bi bi-table"></i>
+        </div>
+        <h5>暂无计时明细</h5>
+        <p>当天还没有已结束的专注计时记录。</p>
+    </div>
+
+    {% endif %}
+</div>
+
+
+<script id="dailyLabelsData" type="application/json">
+    {{ daily_labels | default([]) | tojson }}
+</script>
+
+<script id="dailyValuesData" type="application/json">
+    {{ daily_values | default([]) | tojson }}
+</script>
+
+<script id="categoryDataJson" type="application/json">
+    {{ category_data | default([]) | tojson }}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+<script>
+    const dailyLabels = JSON.parse(
+        document.getElementById("dailyLabelsData").textContent
+    );
+
+    const dailyValues = JSON.parse(
+        document.getElementById("dailyValuesData").textContent
+    );
+
+    const categoryData = JSON.parse(
+        document.getElementById("categoryDataJson").textContent
+    );
+
+    if (dailyLabels.length > 0) {
+        const dailyBarElement = document.getElementById("dailyBarChart");
+
+        if (dailyBarElement) {
+            const dailyChart = echarts.init(dailyBarElement);
+
+            const dailyOption = {
+                tooltip: {
+                    trigger: "axis",
+                    axisPointer: {
+                        type: "shadow"
+                    },
+                    formatter: function(params) {
+                        const item = params[0];
+                        return item.name + "<br/>用时：" + item.value + " 分钟";
+                    }
+                },
+                grid: {
+                    left: "3%",
+                    right: "4%",
+                    bottom: "8%",
+                    containLabel: true
+                },
+                xAxis: {
+                    type: "category",
+                    data: dailyLabels,
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 25
+                    }
+                },
+                yAxis: {
+                    type: "value",
+                    name: "分钟"
+                },
+                series: [
+                    {
+                        name: "用时",
+                        type: "bar",
+                        data: dailyValues,
+                        barWidth: "45%",
+                        itemStyle: {
+                            borderRadius: [8, 8, 0, 0]
+                        }
+                    }
+                ]
+            };
+
+            dailyChart.setOption(dailyOption);
+
+            window.addEventListener("resize", function() {
+                dailyChart.resize();
+            });
+        }
+    }
+
+    if (categoryData.length > 0) {
+        const categoryPieElement = document.getElementById("categoryPieChart");
+
+        if (categoryPieElement) {
+            const categoryChart = echarts.init(categoryPieElement);
+
+            const categoryOption = {
+                tooltip: {
+                    trigger: "item",
+                    formatter: "{b}<br/>用时：{c} 分钟<br/>占比：{d}%"
+                },
+                legend: {
+                    bottom: 0,
+                    left: "center"
+                },
+                series: [
+                    {
+                        name: "分类占比",
+                        type: "pie",
+                        radius: ["40%", "68%"],
+                        center: ["50%", "45%"],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 8,
+                            borderWidth: 2,
+                            borderColor: "#fff"
+                        },
+                        label: {
+                            formatter: "{b}: {d}%"
+                        },
+                        data: categoryData
+                    }
+                ]
+            };
+
+            categoryChart.setOption(categoryOption);
+
+            window.addEventListener("resize", function() {
+                categoryChart.resize();
+            });
+        }
+    }
+</script>
+
+{% endblock %}

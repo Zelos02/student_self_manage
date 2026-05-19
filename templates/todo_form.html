@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                {% if todo %}
+                    <h4 class="mb-0">修改待办事项</h4>
+                {% else %}
+                    <h4 class="mb-0">添加待办事项</h4>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+
+                <form method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label">待办事项标题</label>
+                        <input type="text"
+                               name="title"
+                               class="form-control"
+                               required
+                               value="{{ todo.title if todo else '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">事项描述</label>
+                        <textarea name="description"
+                                  class="form-control"
+                                  rows="3">{{ todo.description if todo else '' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">已有分类</label>
+                        <select name="category_id" class="form-select">
+                            <option value="">不选择分类</option>
+
+                            {% for category in categories %}
+                                <option value="{{ category.category_id }}"
+                                    {% if todo and todo.category_id == category.category_id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ category.category_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <div class="form-text">
+                            如果不选择已有分类，可以在下面创建一个新分类。
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">新建分类</label>
+                        <input type="text"
+                               name="new_category_name"
+                               class="form-control"
+                               placeholder="例如：学习、运动、生活、考试">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">计时方式</label>
+                        <select name="timing_mode" class="form-select">
+                            <option value="count_up"
+                                {% if not todo or todo.timing_mode == "count_up" %}
+                                    selected
+                                {% endif %}
+                            >
+                                正向计时
+                            </option>
+
+                            <option value="count_down"
+                                {% if todo and todo.timing_mode == "count_down" %}
+                                    selected
+                                {% endif %}
+                            >
+                                倒计时
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">目标时间，单位：分钟</label>
+                        <input type="number"
+                               name="target_minutes"
+                               class="form-control"
+                               min="1"
+                               value="{{ todo.target_minutes if todo and todo.target_minutes else '' }}"
+                               placeholder="例如：60">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">截止时间</label>
+                        <input type="datetime-local"
+                               name="due_time"
+                               class="form-control"
+                               value="{{ todo.due_time.strftime('%Y-%m-%dT%H:%M') if todo and todo.due_time else '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">提前提醒时间，单位：分钟</label>
+                        <input type="number"
+                               name="remind_before_minutes"
+                               class="form-control"
+                               min="0"
+                               value="{{ todo.remind_before_minutes if todo and todo.remind_before_minutes is not none else 10 }}">
+                    </div>
+
+                    {% if todo %}
+                    <div class="mb-3">
+                        <label class="form-label">状态</label>
+                        <select name="status" class="form-select">
+                            <option value="未开始" {% if todo.status == "未开始" %}selected{% endif %}>未开始</option>
+                            <option value="进行中" {% if todo.status == "进行中" %}selected{% endif %}>进行中</option>
+                            <option value="已完成" {% if todo.status == "已完成" %}selected{% endif %}>已完成</option>
+                            <option value="已取消" {% if todo.status == "已取消" %}selected{% endif %}>已取消</option>
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('todo.todo_list') }}" class="btn btn-secondary">
+                            返回
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            保存
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

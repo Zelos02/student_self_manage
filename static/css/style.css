@@ -1,0 +1,165 @@
+:root {
+    --primary-color: #4f7cff;
+    --primary-dark: #315bdc;
+    --bg-color: #f4f7fb;
+    --card-radius: 18px;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--text-main);
+    font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+}
+
+/* 顶部导航栏 */
+.app-navbar {
+    background: linear-gradient(135deg, #4f7cff, #6c63ff);
+    box-shadow: 0 8px 20px rgba(79, 124, 255, 0.25);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.nav-link {
+    font-weight: 500;
+}
+
+/* 页面容器 */
+.page-container {
+    padding-top: 24px;
+    padding-bottom: 40px;
+}
+
+/* 通用卡片 */
+.app-card {
+    border: none;
+    border-radius: var(--card-radius);
+    box-shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+}
+
+.app-card:hover {
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+
+/* 页面标题 */
+.page-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* 按钮 */
+.btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 10px;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-outline-primary {
+    border-radius: 10px;
+}
+
+.btn {
+    font-weight: 500;
+}
+
+/* 表单 */
+.form-control,
+.form-select {
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(79, 124, 255, 0.18);
+}
+
+/* 登录注册卡片 */
+.auth-card {
+    border: none;
+    border-radius: 22px;
+    box-shadow: 0 15px 40px rgba(31, 41, 55, 0.12);
+}
+
+.auth-title {
+    font-weight: 700;
+}
+
+/* 首页功能卡片 */
+.feature-card {
+    border: none;
+    border-radius: 20px;
+    padding: 8px;
+    height: 100%;
+    box-shadow: 0 10px 25px rgba(31, 41, 55, 0.08);
+    transition: all 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px rgba(31, 41, 55, 0.12);
+}
+
+.feature-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(79, 124, 255, 0.12);
+    color: var(--primary-color);
+    font-size: 26px;
+    margin: 0 auto 14px;
+}
+
+/* 待办事项 */
+.todo-table th {
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.todo-title {
+    font-weight: 700;
+}
+
+.todo-desc {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.status-badge {
+    padding: 7px 10px;
+    border-radius: 999px;
+}
+
+/* 空状态 */
+.empty-box {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    color: #a5b4fc;
+}

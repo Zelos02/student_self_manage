@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="page-title">帮助中心</h3>
+        <p class="page-subtitle">
+            查看系统介绍、主要功能和基本操作说明。
+        </p>
+    </div>
+</div>
+
+<div class="app-card bg-white p-4 mb-4">
+    <h5 class="mb-3">
+        <i class="bi bi-info-circle text-primary me-1"></i>
+        软件介绍
+    </h5>
+
+    <p class="text-muted mb-0">
+        大学生自我管理系统是一款面向大学生日常学习和生活计划管理的 Web 系统。
+        系统通过待办事项、专注计时、数据统计、自习室排行榜和心愿墙等功能，
+        帮助学生合理安排学习任务，记录真实学习时间，提高时间利用效率。
+    </p>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="app-card bg-white p-4 h-100">
+            <div class="feature-icon">
+                <i class="bi bi-list-check"></i>
+            </div>
+            <h5>待办事项管理</h5>
+            <p class="text-muted small">
+                可以添加、修改、删除待办事项，并设置分类、计时方式、目标时间、截止时间和提醒时间。
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="app-card bg-white p-4 h-100">
+            <div class="feature-icon">
+                <i class="bi bi-stopwatch"></i>
+            </div>
+            <h5>专注计时</h5>
+            <p class="text-muted small">
+                用户可以从某个待办事项开始计时，系统会记录开始时间、结束时间和持续时长。
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="app-card bg-white p-4 h-100">
+            <div class="feature-icon">
+                <i class="bi bi-bar-chart"></i>
+            </div>
+            <h5>数据统计</h5>
+            <p class="text-muted small">
+                支持查看每日待办事项用时、本周或本月分类时间占比，并通过柱状图和饼图展示。
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="app-card bg-white p-4 h-100">
+            <div class="feature-icon">
+                <i class="bi bi-people"></i>
+            </div>
+            <h5>自习室</h5>
+            <p class="text-muted small">
+                用户可以创建或加入自习室，与同学一起监督学习，根据专注时长进行排名。
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="app-card bg-white p-4 h-100">
+            <div class="feature-icon">
+                <i class="bi bi-chat-heart"></i>
+            </div>
+            <h5>心愿墙</h5>
+            <p class="text-muted small">
+                自习室成员可以发布学习目标、近期计划或鼓励话语，增强学习氛围。
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="app-card bg-white p-4 h-100">
+            <div class="feature-icon">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            <h5>个人中心</h5>
+            <p class="text-muted small">
+                用户可以修改昵称、邮箱、头像地址和登录密码，维护个人账号信息。
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="app-card bg-white p-4">
+    <h5 class="mb-3">
+        <i class="bi bi-journal-check text-primary me-1"></i>
+        基本操作流程
+    </h5>
+
+    <ol class="text-muted mb-0">
+        <li class="mb-2">注册账号并登录系统。</li>
+        <li class="mb-2">进入“待办事项”，添加学习或生活计划。</li>
+        <li class="mb-2">点击待办事项的“开始”按钮，进入专注计时页面。</li>
+        <li class="mb-2">完成任务后点击“结束计时”，系统自动保存计时记录。</li>
+        <li class="mb-2">进入“数据统计”，查看每日用时、分类占比和计时明细。</li>
+        <li class="mb-2">创建或加入自习室，与同学一起查看专注排行榜。</li>
+        <li>在个人中心维护个人信息和账号密码。</li>
+    </ol>
+</div>
+
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="page-title">自习室</h3>
+        <p class="page-subtitle">
+            创建或加入自习室，与同学一起监督学习进度。
+        </p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6">
+        <div class="app-card bg-white p-4 h-100">
+            <h5 class="mb-3">
+                <i class="bi bi-plus-circle text-primary me-1"></i>
+                创建自习室
+            </h5>
+
+            <form method="post" action="{{ url_for('room.create_room') }}">
+                <div class="mb-3">
+                    <label class="form-label">自习室名称</label>
+                    <input type="text"
+                           name="room_name"
+                           class="form-control"
+                           placeholder="例如：数据库课设自习室"
+                           required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    创建自习室
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="app-card bg-white p-4 h-100">
+            <h5 class="mb-3">
+                <i class="bi bi-box-arrow-in-right text-primary me-1"></i>
+                加入自习室
+            </h5>
+
+            <form method="post" action="{{ url_for('room.join_room') }}">
+                <div class="mb-3">
+                    <label class="form-label">自习室邀请码</label>
+                    <input type="text"
+                           name="room_code"
+                           class="form-control"
+                           placeholder="请输入邀请码"
+                           required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    加入自习室
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<div class="app-card bg-white p-4">
+    <h5 class="mb-3">
+        <i class="bi bi-house-heart text-primary me-1"></i>
+        我加入的自习室
+    </h5>
+
+    {% if joined_rooms %}
+
+    <div class="row g-4">
+        {% for room, member in joined_rooms %}
+        <div class="col-md-4">
+            <div class="card feature-card">
+                <div class="card-body">
+                    <div class="feature-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+
+                    <h5 class="text-center">{{ room.room_name }}</h5>
+
+                    <p class="text-muted small text-center mb-2">
+                        邀请码：
+                        <strong>{{ room.room_code }}</strong>
+                    </p>
+
+                    <p class="text-muted small text-center">
+                        加入时间：
+                        {% if member.joined_at %}
+                            {{ member.joined_at.strftime("%Y-%m-%d %H:%M:%S") }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </p>
+
+                    <div class="text-center">
+                        <a href="{{ url_for('room.room_detail', room_id=room.room_id) }}"
+                           class="btn btn-outline-primary btn-sm">
+                            进入自习室
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+
+    <div class="empty-box">
+        <div class="empty-icon">
+            <i class="bi bi-people"></i>
+        </div>
+        <h5>你还没有加入任何自习室</h5>
+        <p>可以创建一个新的自习室，或者通过邀请码加入同学的自习室。</p>
+    </div>
+
+    {% endif %}
+</div>
+
+{% endblock %}
